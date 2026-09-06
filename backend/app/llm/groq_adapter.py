@@ -24,7 +24,8 @@ class GroqAdapter(BaseLLMProvider):
         base_url: Optional[str] = None,
         provider_name: str = "groq"
     ):
-        super().__init__(provider_name=provider_name, api_key=api_key, base_url=base_url)
+        cleaned_key = api_key.strip().strip('"').strip("'") if api_key else None
+        super().__init__(provider_name=provider_name, api_key=cleaned_key, base_url=base_url)
         self.default_base_url = (base_url or "https://api.groq.com/openai/v1").rstrip("/")
 
     def _get_headers(self) -> Dict[str, str]:
@@ -39,7 +40,7 @@ class GroqAdapter(BaseLLMProvider):
     async def generate(
         self,
         messages: List[Dict[str, str]],
-        model: str = "llama-3.1-8b-instant",
+        model: str = "groq/compound-mini",
         temperature: float = 0.2,
         max_tokens: int = 1000,
         timeout: float = 25.0,
@@ -90,7 +91,7 @@ class GroqAdapter(BaseLLMProvider):
     async def stream(
         self,
         messages: List[Dict[str, str]],
-        model: str = "llama-3.1-8b-instant",
+        model: str = "groq/compound-mini",
         temperature: float = 0.2,
         max_tokens: int = 1000,
         timeout: float = 25.0,
@@ -127,11 +128,13 @@ class GroqAdapter(BaseLLMProvider):
                         json_str = line[6:]
                         try:
                             chunk_data = json.loads(json_str)
-                            delta = chunk_data["choices"][0].get("delta", {})
-                            content = delta.get("content")
-                            if content:
-                                yield content
-                        except json.JSONDecodeError:
+                            choices = chunk_data.get("choices", [])
+                            if choices and len(choices) > 0:
+                                delta = choices[0].get("delta", {})
+                                content = delta.get("content")
+                                if content:
+                                    yield content
+                        except Exception:
                             continue
 
     async def embed(
