@@ -178,12 +178,12 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
         prev.map((msg) =>
           msg.id === assistantMessageId
             ? {
-                ...msg,
-                content: accumulatedContent || 'No response generated.',
-                citations: receivedCitations,
-                confidence: finalConfidence,
-                isStreaming: false
-              }
+              ...msg,
+              content: accumulatedContent || 'No response generated.',
+              citations: receivedCitations,
+              confidence: finalConfidence,
+              isStreaming: false
+            }
             : msg
         )
       );
@@ -202,11 +202,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
           prev.map((msg) =>
             msg.id === assistantMessageId
               ? {
-                  ...msg,
-                  content: errMsg,
-                  error: true,
-                  isStreaming: false
-                }
+                ...msg,
+                content: errMsg,
+                error: true,
+                isStreaming: false
+              }
               : msg
           )
         );
@@ -322,11 +322,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
           <button
             onClick={() => handleSendMessage()}
             disabled={!inputValue.trim() || isStreaming}
-            className={`p-2 rounded-lg transition-all ${
-              inputValue.trim() && !isStreaming
+            className={`p-2 rounded-lg transition-all ${inputValue.trim() && !isStreaming
                 ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm'
                 : 'text-slate-400 cursor-not-allowed'
-            }`}
+              }`}
             aria-label="Send message"
           >
             <Send className="w-4 h-4" />
