@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # FastAPI Backend Service (Groq Cloud LLM + Hybrid RAG)
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: incerro-chatbot-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=production
+      - LLM_PROVIDER=groq
+      - PRIMARY_MODEL=llama-3.1-8b-instant
+      - DATABASE_URL=sqlite+aiosqlite:////app/data/chatbot.db
+      - REDIS_URL=redis://redis:6379/0
+      - REDIS_FALLBACK_MEMORY=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    volumes:
+      - chatbot_data:/app/data
+    depends_on:
+      - redis
+      - jaeger
+    networks:
+      - chatbot-net
+
+  # Redis for Distributed Rate-Limiting & Sliding Window Abuse Detection
+  redis:
+    image: redis:7-alpine
+    container_name: incerro-chatbot-redis
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    networks:
+      - chatbot-net
+
+  # React Frontend Widget + Nginx Reverse Proxy
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: incerro-chatbot-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - chatbot-net
+
+  # OpenTelemetry Jaeger All-in-One for Distributed Tracing & Flame Graphs
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: incerro-chatbot-jaeger
+    restart: unless-stopped
+    ports:
+      - "16686:16686" # Jaeger Web UI
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+    networks:
+      - chatbot-net
+
+networks:
+  chatbot-net:
+    driver: bridge
+
+volumes:
+  chatbot_data:
+  redis_data:

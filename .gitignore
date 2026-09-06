@@ -1,0 +1,100 @@
+# ==============================================================================
+# Incerro Enterprise Chatbot .gitignore
+# ==============================================================================
+
+# --- Environment & Secret Variables ---
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# --- Databases & Local Storage ---
+*.db
+*.sqlite
+*.sqlite3
+chatbot.db
+chatbot.db-journal
+chatbot.db-wal
+chatbot.db-shm
+
+# --- Python & Virtual Environments ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+env.bak/
+venv.bak/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+htmlcov/
+.tox/
+
+# --- Node & Frontend Build Artifacts ---
+frontend/node_modules/
+node_modules/
+frontend/dist/
+dist/
+frontend/.vite/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Temporary & Scratch Files ---
+scratch_*.py
+powershell.cmd
+*.log
+*.tmp
+logs/
+
+# --- IDE & Editor Artifacts ---
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# --- OS Metadata ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
