@@ -8,6 +8,7 @@
 .env.*.local
 .env.development
 .env.production
+!.env.example
 
 # --- Databases & Local Storage ---
 *.db
