@@ -51,10 +51,15 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
     document.documentElement.classList.toggle('dark');
   };
 
+  const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
   const handleClearHistory = async () => {
     if (conversationId) {
       try {
-        await fetch(`/api/v1/conversations/${conversationId}`, { method: 'DELETE' });
+        await fetch(`${API_BASE}/api/v1/conversations/${conversationId}`, { 
+          method: 'DELETE',
+          credentials: 'include'
+        });
       } catch (err) {
         // Continue clearing local state
       }
@@ -111,9 +116,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
 
     try {
       // Use SSE streaming endpoint
-      const response = await fetch('/api/v1/chat/stream', {
+      const response = await fetch(`${API_BASE}/api/v1/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           message: text,
           conversation_id: conversationId,
